@@ -59,7 +59,6 @@
             tableElement.appendChild(row);
 
             // Initialiser le graphique pour ce module spécifique
-
             var ctx = document.getElementById('moduleChart_' + obj.id).getContext('2d');
             var chart = new Chart(ctx, {
               type: 'line',
@@ -74,6 +73,7 @@
                 }]
               },
               options: {
+                // Personnalisez les options du graphique selon vos besoins
               }
             });
           });
@@ -87,9 +87,15 @@
 
     // Lancer la mise à jour des graphiques au chargement de la page
     updateCharts();
+
+    // Lancer la mise à jour des graphiques à intervalles réguliers (par exemple toutes les 3 secondes)
+    setInterval(function() {
+      updateCharts();
+    }, 3000); // Exécuter la requête toutes les 3 secondes (3000 ms)
   });
 
 </script>
+
 
 <h1>État des modules</h1>
 <table>

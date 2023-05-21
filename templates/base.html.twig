@@ -16,6 +16,27 @@
         {% endblock %}
     </head>
     <body>
+    <script>
+    function runCommand() {
+        $.ajax({
+            url: '/run-random-data-command',
+            method: 'GET',
+            success: function(response) {
+            console.log(response); // Afficher la réponse JSON
+            },
+            error: function(error) {
+            console.error(error);
+            }
+        });
+        }
+
+        // Lancer la commande au chargement initial de la page
+        runCommand();
+
+        // Définir une minuterie pour lancer la commande à intervalles réguliers (par exemple, toutes les 3 secondes)
+        setInterval(runCommand, 3000);
+
+    </script>
         <header>
             <a href="/">Accueil</a>
             <a href="/add-module">Ajouter un module</a>
