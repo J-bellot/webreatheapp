@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Mesure;
+use App\Entity\Panne;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -41,5 +42,6 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Modules', 'fa fa-area-chart');
         yield MenuItem::linkToCrud('Mesures', 'fas fa-bar-chart', Mesure::class);
+        yield MenuItem::linkToCrud('Pannes', 'fas fa-exclamation-triangle', Panne::class);
     }
 }

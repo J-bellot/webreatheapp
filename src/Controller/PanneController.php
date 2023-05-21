@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 
+use DateTime;
+use App\Entity\Panne;
 use App\Entity\Module;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +35,16 @@ class PanneController extends AbstractController
                 if ($random === 1) {
                     // Il y a 1/3 chances que le module soit réparé
                     $module->setEtat(1);
+                    
+                    // Mettre à jour l'objet Panne existant
+                    $panne = $entityManager->getRepository(Panne::class)->findOneBy(['module' => $module, 'fin' => null]);
+                    if ($panne) {
+                        $panne->setFin(new DateTime());
+                        $entityManager->flush();
+                    }
+                } else {
+                    // Le module est en panne mais il n'y a pas de changement d'état
+                    continue;
                 }
             } else {
                 // Le module n'est pas en panne
@@ -40,13 +52,24 @@ class PanneController extends AbstractController
                 if ($random === 1) {
                     // Il y a 1/10 chances que le module tombe en panne
                     $module->setEtat(0);
+        
+                    // Créer l'objet Panne
+                    $panne = new Panne();
+                    $panne->setModule($module);
+                    $panne->setDescription("Panne qui est arrivée je sais pas trop quand mais tkt");
+                    $panne->setDebut(new DateTime());
+        
+                    // Persist et flush l'objet Panne
+                    $entityManager->persist($panne);
+                    $entityManager->flush();
                 }
             }
             
             $entityManager->persist($module);
         }
-
+        
         $entityManager->flush();
+        
 
         return new Response(); // Renvoyer une réponse vide
     }

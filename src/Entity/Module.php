@@ -31,10 +31,10 @@ class Module
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $desinstallation = null;
 
-    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Panne::class)]
+    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Panne::class, cascade: ["remove"])]
     private Collection $pannes;
 
-    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Mesure::class)]
+    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Mesure::class, cascade: ["remove"])]
     private Collection $mesures;
 
     public function __construct()

@@ -77,7 +77,8 @@ class ModuleController extends AbstractController
                         return $mesure->getValeur();
                     })->toArray(),
                 ],
-            ];            
+            ];
+            
         }
 
         // Convertir les mises à jour en format JSON
