@@ -58,22 +58,26 @@ class ModuleController extends AbstractController
     #[Route('/update', name: 'status_module_update')]
     public function getUpdates(EntityManagerInterface $entityManager)
     {
-        // Récupérer les mises à jour des états des modules depuis la base de données
-        $updates = $entityManager->getRepository(Module::class)->findAll();
+        $modules = $entityManager->getRepository(Module::class)->findAll();
 
-        // Créer un tableau pour stocker les données des modules
         $moduleData = [];
 
-        // Parcourir les mises à jour et récupérer les propriétés spécifiques
-        foreach ($updates as $module) {
+        foreach ($modules as $module) {
             $moduleData[] = [
                 'installation' => $module->getInstallation(),
                 'nom' => $module->getNom(),
                 'description' => $module->getDescription(),
                 'etat' => $module->getEtat(),
                 'id' => $module->getId(),
-                'chartData' => $module->getMesures()
-            ];
+                'chartData' => [
+                    'labels' => $module->getMesures()->map(function($mesure) {
+                        return $mesure->getDate()->format('Y-m-d H:i:s');
+                    })->toArray(),
+                    'values' => $module->getMesures()->map(function($mesure) {
+                        return $mesure->getValeur();
+                    })->toArray(),
+                ],
+            ];            
         }
 
         // Convertir les mises à jour en format JSON

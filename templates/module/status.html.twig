@@ -6,7 +6,8 @@
 
 <script>
   $(document).ready(function() {
-    setInterval(function() {
+    // Fonction de mise à jour des graphiques
+    function updateCharts() {
       $.ajax({
         url: '/update',
         method: 'GET',
@@ -58,6 +59,7 @@
             tableElement.appendChild(row);
 
             // Initialiser le graphique pour ce module spécifique
+
             var ctx = document.getElementById('moduleChart_' + obj.id).getContext('2d');
             var chart = new Chart(ctx, {
               type: 'line',
@@ -72,7 +74,6 @@
                 }]
               },
               options: {
-                // Personnalisez les options du graphique selon vos besoins
               }
             });
           });
@@ -82,7 +83,10 @@
           console.log("non");
         }
       });
-    }, 3000); // Exécuter la requête toutes les 3 secondes (3000 ms)
+    }
+
+    // Lancer la mise à jour des graphiques au chargement de la page
+    updateCharts();
   });
 
 </script>
