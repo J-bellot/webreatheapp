@@ -17,15 +17,27 @@
     </head>
     <body>
     <script>
+    setInterval(function() {
+        $.ajax({
+            url: '/check-panne',
+            method: 'GET',
+            success: function() {
+            console.log('Vérification de panne effectuée avec succès.');
+            },
+            error: function() {
+            console.error('Une erreur s\'est produite lors de la vérification de panne.');
+            }
+        });
+    }, 3000);
     function runCommand() {
         $.ajax({
             url: '/run-random-data-command',
             method: 'GET',
             success: function(response) {
-            console.log(response); // Afficher la réponse JSON
+                console.log(response); // Afficher la réponse JSON
             },
             error: function(error) {
-            console.error(error);
+                console.error(error);
             }
         });
         }

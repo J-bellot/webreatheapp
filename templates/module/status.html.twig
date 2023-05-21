@@ -58,29 +58,37 @@
             // Ajouter la nouvelle ligne au tableau existant sur la page
             tableElement.appendChild(row);
 
+            // Obtenir les 10 dernières mesures
+            var lastMeasurements = {
+              labels: chartData.labels.slice(-10),
+              values: chartData.values.slice(-10)
+            };
+
             // Initialiser le graphique pour ce module spécifique
             var ctx = document.getElementById('moduleChart_' + obj.id).getContext('2d');
             var chart = new Chart(ctx, {
               type: 'line',
               data: {
-                labels: chartData.labels,
-                datasets: [{
-                  label: 'Valeur mesurée',
-                  data: chartData.values,
-                  borderColor: 'blue',
-                  backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                  fill: true
-                }]
+                labels: lastMeasurements.labels,
+                datasets: [
+                  {
+                    label: 'Valeur mesurée',
+                    data: lastMeasurements.values,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    fill: true,
+                  },
+                ],
               },
               options: {
                 // Personnalisez les options du graphique selon vos besoins
-              }
+              },
             });
           });
         },
-        error: function() {
+        error: function(error) {
           // Code de gestion des erreurs ici
-          console.log("non");
+          console.error(error);
         }
       });
     }

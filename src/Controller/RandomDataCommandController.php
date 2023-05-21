@@ -27,14 +27,17 @@ class RandomDataCommandController extends AbstractController
         $modules = $entityManager->getRepository(Module::class)->findAll();
 
         foreach ($modules as $module) {
-            $value = mt_rand(10, 30); // Générer une valeur aléatoire pour la mesure
+            if ($module->getEtat()){
+                $value = mt_rand(10, 30); // Générer une valeur aléatoire pour la mesure
 
-            $mesure = new Mesure();
-            $mesure->setModule($module);
-            $mesure->setValeur($value);
-            $mesure->setDate(new DateTime());
+                $mesure = new Mesure();
+                $mesure->setModule($module);
+                $mesure->setValeur($value);
+                $mesure->setDate(new DateTime());
 
-            $entityManager->persist($mesure);
+                $entityManager->persist($mesure);
+            }
+                
         }
 
         $entityManager->flush();
