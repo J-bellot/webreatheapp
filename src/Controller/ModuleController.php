@@ -47,7 +47,6 @@ class ModuleController extends AbstractController
     {
         // Récupérez les données nécessaires depuis la base de données à l'aide de Doctrine
 
-        // Exemple : récupération de la liste des modules depuis une entité Module
         $modules = $entityManager->getRepository(Module::class)->findAll();
 
         // Retournez une réponse en utilisant un template Twig pour afficher les données
@@ -72,6 +71,8 @@ class ModuleController extends AbstractController
                 'nom' => $module->getNom(),
                 'description' => $module->getDescription(),
                 'etat' => $module->getEtat(),
+                'id' => $module->getId(),
+                'chartData' => $module->getMesures()
             ];
         }
 

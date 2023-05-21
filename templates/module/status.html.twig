@@ -5,95 +5,116 @@
 {% block body %}
 
 <script>
-    $(document).ready(function() {
-        setInterval(function() {
-            
-            $.ajax({    
-                url: '/update',
-                method: 'GET',
-                success: function(data) {
-                var parsedData = JSON.parse(data); // Convertir la chaîne JSON en objet JavaScript
+  $(document).ready(function() {
+    setInterval(function() {
+      $.ajax({
+        url: '/update',
+        method: 'GET',
+        success: function(data) {
+          var parsedData = JSON.parse(data); // Convertir la chaîne JSON en objet JavaScript
 
-                var tableElement = document.getElementById("modules_status"); // Remplacez "modules_status" par l'identifiant de votre tableau HTML
+          var tableElement = document.getElementById("modules_status"); // Remplacez "modules_status" par l'identifiant de votre tableau HTML
 
-                while (tableElement.firstChild) {
-                    tableElement.removeChild(tableElement.firstChild);
-                }
+          while (tableElement.firstChild) {
+            tableElement.removeChild(tableElement.firstChild);
+          }
 
-                parsedData.forEach(function(obj) {
-                    // Accéder aux propriétés de chaque objet
-                    var name = obj.nom;
-                    var description = obj.description;
-                    var installation = obj.installation.date;                    
+          parsedData.forEach(function(obj) {
+            // Accéder aux propriétés de chaque objet
+            var name = obj.nom;
+            var description = obj.description;
+            var installation = obj.installation.date;
+            var chartData = obj.chartData; // Données pour le graphique
 
-                    if (obj.etat){
-                        var etat = "Fonctionne normalement"
-                    } else {
-                        var etat = "EN PANNE"
-                    }
+            if (obj.etat) {
+              var etat = "Fonctionne normalement";
+            } else {
+              var etat = "EN PANNE";
+            }
 
-                    // Créer de nouveaux éléments HTML pour représenter les nouvelles informations
-                    var row = document.createElement("tr");
-                    var nameCell = document.createElement("td");
-                    var descriptionCell = document.createElement("td");
-                    var etatCell = document.createElement("td");
-                    var dateCell = document.createElement("td");
+            // Créer de nouveaux éléments HTML pour représenter les nouvelles informations
+            var row = document.createElement("tr");
+            var nameCell = document.createElement("td");
+            var descriptionCell = document.createElement("td");
+            var etatCell = document.createElement("td");
+            var dateCell = document.createElement("td");
+            var chartCell = document.createElement("td");
 
-                    // Remplir les nouvelles cellules avec les données appropriées
-                    nameCell.textContent = name;
-                    descriptionCell.textContent = description;
-                    etatCell.textContent = etat;
-                    dateCell.textContent = installation.split(' ')[0];
+            // Remplir les nouvelles cellules avec les données appropriées
+            nameCell.textContent = name;
+            descriptionCell.textContent = description;
+            etatCell.textContent = etat;
+            dateCell.textContent = installation.split(' ')[0];
+            chartCell.innerHTML = '<canvas id="moduleChart_' + obj.id + '"></canvas>';
 
-                    // Ajouter les nouvelles cellules à la nouvelle ligne
-                    row.appendChild(nameCell);
-                    row.appendChild(descriptionCell);
-                    row.appendChild(etatCell);
-                    row.appendChild(dateCell);
+            // Ajouter les nouvelles cellules à la nouvelle ligne
+            row.appendChild(nameCell);
+            row.appendChild(descriptionCell);
+            row.appendChild(etatCell);
+            row.appendChild(dateCell);
+            row.appendChild(chartCell);
 
-                    // Ajouter la nouvelle ligne au tableau existant sur la page
-                    tableElement.appendChild(row);
-                });
-            },
+            // Ajouter la nouvelle ligne au tableau existant sur la page
+            tableElement.appendChild(row);
 
-
-                error: function() {
-                    // Code de gestion des erreurs ici
-                    console.log("non")
-                }
+            // Initialiser le graphique pour ce module spécifique
+            var ctx = document.getElementById('moduleChart_' + obj.id).getContext('2d');
+            var chart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: chartData.labels,
+                datasets: [{
+                  label: 'Valeur mesurée',
+                  data: chartData.values,
+                  borderColor: 'blue',
+                  backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                  fill: true
+                }]
+              },
+              options: {
+                // Personnalisez les options du graphique selon vos besoins
+              }
             });
-        }, 3000); // Exécuter la requête toutes les 3 secondes (3000 ms)
-    });
+          });
+        },
+        error: function() {
+          // Code de gestion des erreurs ici
+          console.log("non");
+        }
+      });
+    }, 3000); // Exécuter la requête toutes les 3 secondes (3000 ms)
+  });
 
 </script>
 
 <h1>État des modules</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>État de fonctionnement</th>
-                <th>Date d'installation</th>
-                <!-- Autres colonnes d'informations -->
-            </tr>
-        </thead>
-        <tbody id="modules_status">
-            {% for module in modules %}
-                <tr>
-                    <td>{{ module.nom }}</td>
-                    <td>{{ module.description }}</td>
-                    <td>{% if module.etat %}
-                        Fonctionne normalement            
-                        {% else %}
-                        EN PANNE
-                        {% endif %}
-                        </td>
-                    <td>{{ module.installation|date('Y-m-d') }}</td>
-                    <!-- Autres cellules d'informations -->
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table>
+  <thead>
+    <tr>
+      <th>Nom</th>
+      <th>Description</th>
+      <th>État de fonctionnement</th>
+      <th>Date d'installation</th>
+      <th>Graphique</th>
+    </tr>
+  </thead>
+  <tbody id="modules_status">
+    {% for module in modules %}
+    <tr>
+      <td>{{ module.nom }}</td>
+      <td>{{ module.description }}</td>
+      <td>
+        {% if module.etat %}
+        Fonctionne normalement
+        {% else %}
+        EN PANNE
+        {% endif %}
+      </td>
+      <td>{{ module.installation|date('Y-m-d') }}</td>
+      <td><canvas id="moduleChart_{{ module.id }}"></canvas></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 {% endblock %}
