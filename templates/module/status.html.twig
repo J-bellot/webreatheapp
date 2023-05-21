@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}WebreatheApp - État des modules{% endblock %}
+
+{% block body %}
+
+<script>
+    $(document).ready(function() {
+        setInterval(function() {
+            
+            $.ajax({    
+                url: '/update',
+                method: 'GET',
+                success: function(data) {
+                var parsedData = JSON.parse(data); // Convertir la chaîne JSON en objet JavaScript
+
+                var tableElement = document.getElementById("modules_status"); // Remplacez "modules_status" par l'identifiant de votre tableau HTML
+
+                while (tableElement.firstChild) {
+                    tableElement.removeChild(tableElement.firstChild);
+                }
+
+                parsedData.forEach(function(obj) {
+                    // Accéder aux propriétés de chaque objet
+                    var name = obj.nom;
+                    var description = obj.description;
+                    var installation = obj.installation.date;                    
+
+                    if (obj.etat){
+                        var etat = "Fonctionne normalement"
+                    } else {
+                        var etat = "EN PANNE"
+                    }
+
+                    // Créer de nouveaux éléments HTML pour représenter les nouvelles informations
+                    var row = document.createElement("tr");
+                    var nameCell = document.createElement("td");
+                    var descriptionCell = document.createElement("td");
+                    var etatCell = document.createElement("td");
+                    var dateCell = document.createElement("td");
+
+                    // Remplir les nouvelles cellules avec les données appropriées
+                    nameCell.textContent = name;
+                    descriptionCell.textContent = description;
+                    etatCell.textContent = etat;
+                    dateCell.textContent = installation.split(' ')[0];
+
+                    // Ajouter les nouvelles cellules à la nouvelle ligne
+                    row.appendChild(nameCell);
+                    row.appendChild(descriptionCell);
+                    row.appendChild(etatCell);
+                    row.appendChild(dateCell);
+
+                    // Ajouter la nouvelle ligne au tableau existant sur la page
+                    tableElement.appendChild(row);
+                });
+            },
+
+
+                error: function() {
+                    // Code de gestion des erreurs ici
+                    console.log("non")
+                }
+            });
+        }, 3000); // Exécuter la requête toutes les 3 secondes (3000 ms)
+    });
+
+</script>
+
+<h1>État des modules</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>État de fonctionnement</th>
+                <th>Date d'installation</th>
+                <!-- Autres colonnes d'informations -->
+            </tr>
+        </thead>
+        <tbody id="modules_status">
+            {% for module in modules %}
+                <tr>
+                    <td>{{ module.nom }}</td>
+                    <td>{{ module.description }}</td>
+                    <td>{% if module.etat %}
+                        Fonctionne normalement            
+                        {% else %}
+                        EN PANNE
+                        {% endif %}
+                        </td>
+                    <td>{{ module.installation|date('Y-m-d') }}</td>
+                    <!-- Autres cellules d'informations -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

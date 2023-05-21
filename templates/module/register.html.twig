@@ -8,11 +8,11 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
- {{ form_start(form) }}
-        {{ form_row(form.nom) }}
-        {{ form_row(form.description) }}
-        {# Ajoutez ici les autres champs du formulaire #}
+{{ form_start(form) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.description) }}
 
-        <button type="submit">Inscrire</button>
-    {{ form_end(form) }}
+    <button type="submit">Inscrire</button>
+{{ form_end(form) }}
+
 {% endblock %}

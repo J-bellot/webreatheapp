@@ -72,6 +72,11 @@ class Module
         return $this;
     }
 
+    public function getEtat(): ?bool
+    {
+        return $this->etat;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;

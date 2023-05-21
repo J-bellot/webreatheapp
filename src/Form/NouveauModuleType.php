@@ -6,6 +6,7 @@ use App\Entity\Module;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class NouveauModuleType extends AbstractType
 {
@@ -14,7 +15,10 @@ class NouveauModuleType extends AbstractType
         $builder
             ->add('nom')
             ->add('description')
-            ->add('installation')
+            ->add('installation', DateType::class, [
+                'data' => new \DateTime(), // Définir la date actuelle comme valeur par défaut
+                'widget' => 'single_text',
+            ]);
         ;
     }
 
