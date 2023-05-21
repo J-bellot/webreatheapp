@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
@@ -49,11 +51,30 @@
         setInterval(runCommand, 3000);
 
     </script>
-        <header>
-            <a href="/">Accueil</a>
-            <a href="/add-module">Ajouter un module</a>
-            <a href="/admin">Dashboard</a>
+        <header class="navbar navbar-expand-lg navbar-light bg-white">
+            <div class="container">
+            <a class="navbar-brand" href="/">WebreatheApp</a>
+
+            <!-- Bouton pour le menu sur les petits écrans -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                <!-- Lien vers le dashboard admin -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">Dashboard Admin</a>
+                </li>
+                <!-- Lien pour ajouter un module -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/add-module">Ajouter un module</a>
+                </li>
+                </ul>
+            </div>
+            </div>
         </header>
+    
         {% block body %}{% endblock %}
     </body>
 </html>

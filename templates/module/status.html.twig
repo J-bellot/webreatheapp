@@ -6,6 +6,9 @@
 
 <script>
   $(document).ready(function() {
+    // Stocker les instances de graphiques
+    var charts = {};
+
     // Fonction de mise à jour des graphiques
     function updateCharts() {
       $.ajax({
@@ -13,12 +16,6 @@
         method: 'GET',
         success: function(data) {
           var parsedData = JSON.parse(data); // Convertir la chaîne JSON en objet JavaScript
-
-          var tableElement = document.getElementById("modules_status"); // Remplacez "modules_status" par l'identifiant de votre tableau HTML
-
-          while (tableElement.firstChild) {
-            tableElement.removeChild(tableElement.firstChild);
-          }
 
           parsedData.forEach(function(obj) {
             // Accéder aux propriétés de chaque objet
@@ -33,36 +30,56 @@
               var etat = "EN PANNE";
             }
 
-            // Créer de nouveaux éléments HTML pour représenter les nouvelles informations
-            var row = document.createElement("tr");
-            var nameCell = document.createElement("td");
-            var descriptionCell = document.createElement("td");
-            var etatCell = document.createElement("td");
-            var dateCell = document.createElement("td");
-            var chartCell = document.createElement("td");
+            // Vérifier si la ligne pour ce module existe déjà
+            var row = document.getElementById("moduleRow_" + obj.id);
 
-            // Remplir les nouvelles cellules avec les données appropriées
-            nameCell.textContent = name;
-            descriptionCell.textContent = description;
-            etatCell.textContent = etat;
-            dateCell.textContent = installation.split(' ')[0];
-            chartCell.innerHTML = '<canvas id="moduleChart_' + obj.id + '"></canvas>';
+            if (row) {
+              // La ligne existe déjà, mettre à jour les cellules spécifiques
+              row.cells[0].textContent = name;
+              row.cells[1].textContent = description;
+              row.cells[2].textContent = etat;
+              row.cells[3].textContent = installation.split(' ')[0];
+            } else {
+              // Créer de nouveaux éléments HTML pour représenter les nouvelles informations
+              row = document.createElement("tr");
+              row.id = "moduleRow_" + obj.id;
 
-            // Ajouter les nouvelles cellules à la nouvelle ligne
-            row.appendChild(nameCell);
-            row.appendChild(descriptionCell);
-            row.appendChild(etatCell);
-            row.appendChild(dateCell);
-            row.appendChild(chartCell);
+              var nameCell = document.createElement("td");
+              var descriptionCell = document.createElement("td");
+              var etatCell = document.createElement("td");
+              var dateCell = document.createElement("td");
+              var chartCell = document.createElement("td");
 
-            // Ajouter la nouvelle ligne au tableau existant sur la page
-            tableElement.appendChild(row);
+              // Remplir les nouvelles cellules avec les données appropriées
+              nameCell.textContent = name;
+              descriptionCell.textContent = description;
+              etatCell.textContent = etat;
+              dateCell.textContent = installation.split(' ')[0];
+              chartCell.innerHTML = '<canvas id="moduleChart_' + obj.id + '"></canvas>';
+
+              // Ajouter les nouvelles cellules à la nouvelle ligne
+              row.appendChild(nameCell);
+              row.appendChild(descriptionCell);
+              row.appendChild(etatCell);
+              row.appendChild(dateCell);
+              row.appendChild(chartCell);
+
+              // Ajouter la nouvelle ligne au tableau existant sur la page
+              var tableElement = document.getElementById("modules_status");
+              tableElement.appendChild(row);
+            }
 
             // Obtenir les 10 dernières mesures
             var lastMeasurements = {
               labels: chartData.labels.slice(-10),
               values: chartData.values.slice(-10)
             };
+
+            // Vérifier si un graphique existe déjà pour ce module
+            if (charts[obj.id]) {
+              // Détruire le graphique existant
+              charts[obj.id].destroy();
+            }
 
             // Initialiser le graphique pour ce module spécifique
             var ctx = document.getElementById('moduleChart_' + obj.id).getContext('2d');
@@ -81,9 +98,22 @@
                 ],
               },
               options: {
-                // Personnalisez les options du graphique selon vos besoins
+                animation: false, // Désactiver l'animation du graphique
+                scales: {
+                    x: {
+                        display: false, // Cacher les labels de l'axe des abscisses
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false, // Cacher la légende
+                    },
+                },
               },
             });
+
+            // Stocker l'instance du graphique
+            charts[obj.id] = chart;
           });
         },
         error: function(error) {
@@ -118,7 +148,7 @@
   </thead>
   <tbody id="modules_status">
     {% for module in modules %}
-    <tr>
+    <tr id="moduleRow_{{ module.id }}">
       <td>{{ module.nom }}</td>
       <td>{{ module.description }}</td>
       <td>
