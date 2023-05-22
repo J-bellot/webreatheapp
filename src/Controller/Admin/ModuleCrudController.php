@@ -22,9 +22,9 @@ class ModuleCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->hideWhenCreating()
-                ->hideOnIndex(),
+                ->hideOnIndex()->hideWhenUpdating(),
             TextField::new('nom', 'Nom'),
-            BooleanField::new('etat')->hideOnIndex(),
+            BooleanField::new('etat', 'Fonctionne normalement')->hideOnIndex()->hideWhenCreating(),
             TextEditorField::new('description', 'Description'),
             DateField::new('installation', 'Installation'),
             DateField::new('desinstallation')

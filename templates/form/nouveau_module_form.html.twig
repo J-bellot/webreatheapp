@@ -1,0 +1,41 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}WebreatheApp - Ajouter des modules{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+      background-color: #f8f9fa;
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <form method="{{ form.vars.method }}" action="{{ form.vars.action }}" class="form mt-5 mb-5">
+        <div class="mb-3">
+            {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.installation, 'Date d\'installation', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.installation, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.installation) }}
+        </div>
+        {{ form_widget(form._token) }}
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+</div>
+
+{% endblock %}

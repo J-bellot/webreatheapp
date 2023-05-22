@@ -2,6 +2,64 @@
 
 {% block title %}WebreatheApp - État des modules{% endblock %}
 
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+
+    table {
+      margin: 0 auto;
+      background-color: #fff;
+      width: 80%;
+      border-collapse: collapse;
+      border: 1px solid #dee2e6;
+    }
+
+    th,
+    td {
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #dee2e6;
+    }
+
+    tr.panne {
+      background-color: #f8f9fa;
+      color: #555;
+    }
+
+    tr canvas.panne-chart {
+      border-color: #555;
+      background-color: rgba(85, 85, 85, 0.1);
+    }
+
+    @media (max-width: 990px) {
+    .navbar-nav.ml-auto {
+      text-align: right;
+    }
+
+    thead th:not(:first-child) {
+      display: none;
+    }
+
+    td, th {
+        display: block;
+    }
+
+    td[data-th]:before  {
+        content: attr(data-th);
+    }
+  }
+  </style>
+{% endblock %}
+
 {% block body %}
 
 <script>
@@ -35,8 +93,21 @@
 
             if (row) {
               // La ligne existe déjà, mettre à jour les cellules spécifiques
+              if (obj.etat) {
+                row.classList.remove("panne");
+                var chartCell = row.querySelector(".panne-chart");
+                if (chartCell) {
+                  chartCell.classList.remove("panne-chart");
+                }
+              } else {
+                row.classList.add("panne");
+                var chartCell = row.querySelector("canvas");
+                if (chartCell) {
+                  chartCell.classList.add("panne-chart");
+                }
+              }
               row.cells[0].textContent = name;
-              row.cells[1].textContent = description;
+              row.cells[1].innerHTML = description;
               row.cells[2].textContent = etat;
               row.cells[3].textContent = installation.split(' ')[0];
             } else {
@@ -52,7 +123,7 @@
 
               // Remplir les nouvelles cellules avec les données appropriées
               nameCell.textContent = name;
-              descriptionCell.textContent = description;
+              descriptionCell.innerHTML = description;
               etatCell.textContent = etat;
               dateCell.textContent = installation.split(' ')[0];
               chartCell.innerHTML = '<canvas id="moduleChart_' + obj.id + '"></canvas>';
@@ -135,34 +206,38 @@
 </script>
 
 
-<h1>État des modules</h1>
-<table>
-  <thead>
-    <tr>
-      <th>Nom</th>
-      <th>Description</th>
-      <th>État de fonctionnement</th>
-      <th>Date d'installation</th>
-      <th>Graphique</th>
-    </tr>
-  </thead>
-  <tbody id="modules_status">
-    {% for module in modules %}
-    <tr id="moduleRow_{{ module.id }}">
-      <td>{{ module.nom }}</td>
-      <td>{{ module.description }}</td>
-      <td>
-        {% if module.etat %}
-        Fonctionne normalement
-        {% else %}
-        EN PANNE
-        {% endif %}
-      </td>
-      <td>{{ module.installation|date('Y-m-d') }}</td>
-      <td><canvas id="moduleChart_{{ module.id }}"></canvas></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="container">
+  <h1>État des modules</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Description</th>
+          <th>État de fonctionnement</th>
+          <th>Date d'installation</th>
+          <th>Graphique</th>
+        </tr>
+      </thead>
+      <tbody id="modules_status">
+        {% for module in modules %}
+        <tr id="moduleRow_{{ module.id }}" {% if module.etat != 1 %}class="panne"{% endif %}>
+          <td>{{ module.nom }}</td>
+          <td>{{ module.description|raw }}</td>
+          <td>
+            {% if module.etat %}
+            Fonctionne normalement
+            {% else %}
+            EN PANNE
+            {% endif %}
+          </td>
+          <td>{{ module.installation|date('Y-m-d') }}</td>
+          <td><canvas id="moduleChart_{{ module.id }}" {% if not module.etat %}class="panne-chart"{% endif %}></canvas></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 {% endblock %}

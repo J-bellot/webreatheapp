@@ -21,23 +21,22 @@ class ModuleController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/add-module', name: 'add_module')]
-    public function register(Request $request): Response
+    #[Route('/add-module', name: 'app_module')]
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         $module = new Module();
         $form = $this->createForm(NouveauModuleType::class, $module);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $module->setEtat(True);
-            $this->entityManager->persist($module);
-            $this->entityManager->flush();
-            
+            $entityManager->persist($module);
+            $entityManager->flush();
+
             // Redirigez l'utilisateur vers une autre page après l'inscription réussie
-            return $this->redirect('/');
+            return $this->redirectToRoute('status_module');
         }
 
-        return $this->render('module/register.html.twig', [
+        return $this->render('form/nouveau_module_form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
