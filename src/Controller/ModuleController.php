@@ -32,7 +32,7 @@ class ModuleController extends AbstractController
             $entityManager->persist($module);
             $entityManager->flush();
 
-            // Redirigez l'utilisateur vers une autre page après l'inscription réussie
+            // Redirigez l'utilisateur vers une autre page
             return $this->redirectToRoute('status_module');
         }
 

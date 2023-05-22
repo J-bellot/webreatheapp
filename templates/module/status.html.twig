@@ -64,7 +64,6 @@
 
 <script>
   $(document).ready(function() {
-    // Stocker les instances de graphiques
     var charts = {};
 
     // Fonction de mise à jour des graphiques
@@ -80,7 +79,7 @@
             var name = obj.nom;
             var description = obj.description;
             var installation = obj.installation.date;
-            var chartData = obj.chartData; // Données pour le graphique
+            var chartData = obj.chartData;
 
             if (obj.etat) {
               var etat = "Fonctionne normalement";
@@ -92,7 +91,7 @@
             var row = document.getElementById("moduleRow_" + obj.id);
 
             if (row) {
-              // La ligne existe déjà, mettre à jour les cellules spécifiques
+              // La ligne existe déjà, mettre à jour les cellules spécifiques et gestion de l'état "en panne"
               if (obj.etat) {
                 row.classList.remove("panne");
                 var chartCell = row.querySelector(".panne-chart");
@@ -182,8 +181,6 @@
                 },
               },
             });
-
-            // Stocker l'instance du graphique
             charts[obj.id] = chart;
           });
         },
@@ -197,10 +194,10 @@
     // Lancer la mise à jour des graphiques au chargement de la page
     updateCharts();
 
-    // Lancer la mise à jour des graphiques à intervalles réguliers (par exemple toutes les 3 secondes)
+    // Lancer la mise à jour des graphiques à intervalles réguliers
     setInterval(function() {
       updateCharts();
-    }, 3000); // Exécuter la requête toutes les 3 secondes (3000 ms)
+    }, 3000); // Exécuter la requête toutes les 3 secondes 
   });
 
 </script>

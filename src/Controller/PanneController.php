@@ -42,9 +42,6 @@ class PanneController extends AbstractController
                         $panne->setFin(new DateTime());
                         $entityManager->flush();
                     }
-                } else {
-                    // Le module est en panne mais il n'y a pas de changement d'état
-                    continue;
                 }
             } else {
                 // Le module n'est pas en panne
@@ -71,7 +68,7 @@ class PanneController extends AbstractController
         $entityManager->flush();
         
 
-        return new Response(); // Renvoyer une réponse vide
+        return new Response();
     }
 }
 
